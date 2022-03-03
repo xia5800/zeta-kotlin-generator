@@ -1,0 +1,92 @@
+package ${package.Controller}
+
+<% if(restControllerStyle){ %>
+import org.springframework.web.bind.annotation.*;
+<% }else{ %>
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+<% } %>
+<% /** 导入service、entity、param、dto */ %>
+import ${package.Service}.${table.serviceName}
+import ${package.Entity}.${entity}
+import ${customPackage.dtoPackagePath}.${customPackage.entityDTO}
+import ${customPackage.dtoPackagePath}.${customPackage.entitySaveDTO}
+import ${customPackage.dtoPackagePath}.${customPackage.entityUpdateDTO}
+import ${customPackage.paramBasePackagePath}.${customPackage.entityQueryParam}
+import com.baomidou.mybatisplus.core.metadata.IPage
+import org.zetaframework.base.result.ApiResult
+import org.zetaframework.core.saToken.annotation.PreAuth
+import org.zetaframework.base.controller.SuperController
+<% if(swagger) { %>
+import io.swagger.annotations.*
+<% } %>
+<%
+/* 获取主键字段的类型 */
+var IdType = "";
+for(field in table.commonFields){
+    if(field.keyFlag) {
+        if(field.propertyType == "Integer") {
+            IdType = "Int";
+        } else {
+            IdType = field.propertyType;
+        }
+        break;
+    }
+}
+%>
+
+/**
+ * <p>
+ * ${table.comment!} 前端控制器
+ * </p>
+ *
+ * @author ${author}
+ * @date ${date}
+ */
+<% if(swagger) { %>
+@Api(tags = ["${table.comment!}"])
+<% } %>
+@PreAuth(replace = "${authorityCode}")
+<% if(restControllerStyle){ %>
+@RestController
+<% }else{ %>
+@Controller
+<% } %>
+@RequestMapping("/api<% if(isNotEmpty(package.ModuleName)){ %>/${package.ModuleName}<% } %>/<% if(controllerMappingHyphenStyle){ %>${controllerMappingHyphen}<% }else{ %>${table.entityPath}<% } %>")
+class ${table.controllerName}: SuperController<${table.serviceName}, ${IdType}, ${entity}, ${customPackage.entityQueryParam}, ${customPackage.entitySaveDTO}, ${customPackage.entityUpdateDTO}>() {
+
+    /**
+     * 处理查询后的数据
+     *
+     * @param page IPage<${entity}>
+     */
+    override fun handlerResult(page: IPage<${entity}>) {
+        super.handlerResult(page)
+        // TODO 处理分页查询后的数据
+    }
+
+    /**
+     * 自定义新增
+     *
+     * @param saveDTO SaveDTO 保存对象
+     * @return ApiResult<Boolean>
+     */
+    override fun handlerSave(saveDTO: ${customPackage.entitySaveDTO}): ApiResult<Boolean> {
+        // TODO 数据校验、数据处理
+        return super.handlerSave(saveDTO)
+    }
+
+
+    /**
+     * 自定义修改
+     *
+     * @param updateDTO UpdateDTO 修改对象
+     * @return ApiResult<Boolean>
+     */
+    override fun handlerUpdate(updateDTO: ${customPackage.entityUpdateDTO}): ApiResult<Boolean> {
+        // TODO 数据校验、数据处理
+        return super.handlerUpdate(updateDTO)
+    }
+
+
+}

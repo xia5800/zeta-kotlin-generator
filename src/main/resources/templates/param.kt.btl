@@ -1,0 +1,70 @@
+package ${customPackage.paramBasePackagePath}
+
+<% for(pkg in table.importPackages){ %>
+import ${pkg}
+<% } %>
+<% if(swagger){ %>
+import io.swagger.annotations.ApiModel
+import io.swagger.annotations.ApiModelProperty
+<% } %>
+import javax.validation.constraints.*
+
+/**
+ * <p>
+ * ${table.comment!} 查询参数
+ * </p>
+ *
+ * @author ${author}
+ * @date ${date}
+ */
+@ApiModel(description = "${table.comment!''}查询参数")
+data class ${customPackage.entityQueryParam}(
+<% /** 父类中公有字段 */  %>
+<% for(field in table.commonFields){ %>
+
+    <%
+        // @ApiModelProperty去除换行
+        var modelProperty = field.comment;
+        if(strutil.index(modelProperty, "\n") != -1) {
+            modelProperty = reg.replace(modelProperty, "\\n", "");
+        }
+    %>
+    <% if(isNotEmpty(field.comment)){ %>
+    /** ${modelProperty} */
+        <% /* 加swagger注解 */ %>
+        <% if(swagger){ %>
+    @ApiModelProperty(value = "${modelProperty}")
+        <% } %>
+    <% } %>
+    <% if(field.propertyType == 'Integer'){ %>
+    var ${field.propertyName}: Int? = null,
+    <% }else{ %>
+    var ${field.propertyName}: ${field.propertyType}? = null,
+    <% } %>
+<% } %>
+<% /** 普通字段 */  %>
+<% for(field in table.fields){ %>
+
+    <%
+        // @ApiModelProperty去除换行
+        var modelProperty = field.comment;
+        if(strutil.index(modelProperty, "\n") != -1) {
+            modelProperty = reg.replace(modelProperty, "\\n", "");
+        }
+    %>
+    <% if(!field.logicDeleteField){ %>
+        <% if(isNotEmpty(field.comment)){ %>
+    /** ${modelProperty} */
+            <% /* 加swagger注解 */ %>
+            <% if(swagger){ %>
+    @ApiModelProperty(value = "${modelProperty}")
+            <% } %>
+        <% } %>
+        <% if(field.propertyType == 'Integer'){ %>
+    var ${field.propertyName}: Int? = null,
+        <% }else{ %>
+    var ${field.propertyName}: ${field.propertyType}? = null,
+        <% } %>
+    <% } %>
+<% } %>
+)
