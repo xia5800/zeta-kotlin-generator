@@ -2,6 +2,7 @@ package com.zeta.generator
 
 import com.zeta.generator.engine.CodeGeneratorConfig
 import com.zeta.generator.engine.Generator
+import com.zeta.generator.enums.EntityTypeEnum
 
 /**
  * Main方法
@@ -33,8 +34,8 @@ private fun buildConfig(): CodeGeneratorConfig  {
         // 代码输出目录，不要带项目名，生成代码的时候会自动拼接项目名
         this.outputDir = "D://codeGen/"
 
-        // entity父类路径（默认包含，id、创建人创建时间、修改人修改时间）。 如不需要修改人修改时间，请使用SuperEntity。不需要继承父类请设置空""值
-        this.entitySuperClass = "org.zetaframework.base.entity.Entity"
+        // entity父类路径（默认包含，id、创建人创建时间、修改人修改时间）。 如不需要修改人修改时间，请使用SuperEntity。不需要继承父类请设置EntityTypeEnum.NONE值
+        this.superEntity = EntityTypeEnum.SUPER_ENTITY
 
         // 数据库配置
         this.dbUrl = "jdbc:mysql://localhost:3306/zeta_kotlin?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8"

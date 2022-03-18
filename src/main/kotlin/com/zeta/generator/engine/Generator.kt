@@ -4,13 +4,12 @@ import cn.hutool.core.util.StrUtil
 import cn.hutool.json.JSONUtil
 import cn.hutool.log.Log
 import cn.hutool.log.LogFactory
-import com.baomidou.mybatisplus.annotation.FieldFill
 import com.baomidou.mybatisplus.annotation.IdType
 import com.baomidou.mybatisplus.generator.FastAutoGenerator
 import com.baomidou.mybatisplus.generator.config.*
 import com.baomidou.mybatisplus.generator.config.rules.DateType
 import com.baomidou.mybatisplus.generator.engine.BeetlTemplateEngine
-import com.baomidou.mybatisplus.generator.fill.Property
+import com.zeta.generator.enums.EntityTypeEnum
 import java.util.function.Consumer
 
 /**
@@ -163,10 +162,10 @@ object Generator {
         // Entity 策略配置
         it.entityBuilder().apply {
             // 如果需要继承父类
-            if(StrUtil.isNotBlank(config.entitySuperClass)) {
+            if(!config.superEntity.eq(EntityTypeEnum.NONE)) {
                 this.enableActiveRecord()
-                this.superClass(config.entitySuperClass)
-                this.addSuperEntityColumns("id", "created_by", "create_time", "updated_by", "update_time")
+                this.superClass(config.superEntity.path)
+                this.addSuperEntityColumns(*config.superEntity.columns)
             }
         }
             .enableRemoveIsPrefix()

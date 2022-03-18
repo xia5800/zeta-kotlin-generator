@@ -2,6 +2,7 @@ package com.zeta.generator.engine
 
 import cn.hutool.core.collection.CollUtil
 import cn.hutool.core.util.StrUtil
+import com.zeta.generator.enums.EntityTypeEnum
 
 /**
  * 代码生成器配置参数
@@ -30,7 +31,7 @@ data class CodeGeneratorConfig(
     var tablePrefix: MutableList<String>? = null,
 
     /** entity父类路径 */
-    var entitySuperClass: String = "",
+    var superEntity: EntityTypeEnum = EntityTypeEnum.ENTITY,
 
     /** 是否启用mapper.java类上的@Repository注解 */
     var enableRepository: Boolean = true,
@@ -58,11 +59,11 @@ data class CodeGeneratorConfig(
                 this.moduleName = moduleName
                 // 设置作者，如果有的话
                 if(StrUtil.isNotBlank(author)) {
-                    this.author = author!!
+                    this.author = author
                 }
                 // 设置需要去除的表前缀，如果有的话
                 if(StrUtil.isNotBlank(tablePrefix)) {
-                    this.tablePrefix = mutableListOf(tablePrefix!!)
+                    this.tablePrefix = mutableListOf(tablePrefix)
                 }
                 // 设置需要生成的表，如果有的话
                 if(CollUtil.isNotEmpty(tableInclude)) {
