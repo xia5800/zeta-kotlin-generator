@@ -1,12 +1,10 @@
 package ${customPackage.paramBasePackagePath}
 
-<% for(pkg in table.importPackages){ %>
-import ${pkg}
-<% } %>
 <% if(swagger){ %>
 import io.swagger.annotations.ApiModel
 import io.swagger.annotations.ApiModelProperty
 <% } %>
+import ${timePackage}
 import javax.validation.constraints.*
 
 /**

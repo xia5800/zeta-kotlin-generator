@@ -265,6 +265,7 @@ object Generator {
         // 在这里配置自定义的模板参数 。可以直接在模板中使用${packageName}取值
         it.customMap(mutableMapOf<String, Any>(
             "packageName" to config.packageName,
+            "timePackage" to "java.time.*",
             "repositoryAnnotation" to config.enableRepository
         ))
     }
