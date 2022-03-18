@@ -35,7 +35,7 @@ for(field in table.commonFields){
 @ApiModel(description = "${table.comment!''}")
 <% } %>
 <% if(table.convert){ %>
-@TableName("${schemaName}${table.name}")
+@TableName(value = "${schemaName}${table.name}")
 <% } %>
 <% if(isNotEmpty(superEntityClass)){ %>
 class ${entity} : ${superEntityClass}<% if(activeRecord){ %><${IdType}>()<%}%> {

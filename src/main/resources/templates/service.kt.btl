@@ -11,6 +11,6 @@ import ${superServiceClassPackage}
  * @author ${author}
  * @date ${date}
  */
-interface ${table.serviceName} : ${superServiceClass}<${entity}> {
+interface ${table.serviceName}: ${superServiceClass}<${entity}> {
 
 }

@@ -23,6 +23,6 @@ import org.springframework.stereotype.Repository
 <% if(repositoryAnnotation) {%>
 @Repository
 <% } %>
-interface ${table.mapperName} : ${superMapperClass}<${entity}> {
+interface ${table.mapperName}: ${superMapperClass}<${entity}> {
 
 }

@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service
  * @date ${date}
  */
 @Service
-class ${table.serviceImplName} : ${table.serviceName}, ${superServiceImplClass}<${table.mapperName}, ${entity}>() {
+class ${table.serviceImplName}: ${table.serviceName}, ${superServiceImplClass}<${table.mapperName}, ${entity}>() {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
 
