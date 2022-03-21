@@ -9,7 +9,7 @@ import io.swagger.annotations.ApiModelProperty
 <% } %>
 import javax.validation.constraints.*
 <%
-/* 获取主键字段的类型 */
+/* 主键字段的类型 */
 var IdType = "";
 for(field in table.commonFields){
     if(field.keyFlag) {
@@ -17,6 +17,18 @@ for(field in table.commonFields){
             IdType = "Int";
         } else {
             IdType = field.propertyType;
+        }
+        break;
+    }
+}
+/* state字段的类型 */
+var StateType = "";
+for(field in table.commonFields){
+    if(field.name == "state") {
+        if(field.propertyType == "Integer") {
+            StateType = "Int";
+        } else {
+            StateType = field.propertyType;
         }
         break;
     }
@@ -38,11 +50,11 @@ for(field in table.commonFields){
 @TableName(value = "${schemaName}${table.name}")
 <% } %>
 <% if(isNotEmpty(superEntityClass)){ %>
-class ${entity} : ${superEntityClass}<% if(activeRecord){ %><${IdType}>()<%}%> {
+class ${entity}: ${superEntityClass}<% if(superEntityClass == "StateEntity"){ %><${IdType}, ${StateType}>()<% } else if (superEntityClass == "TreeEntity") { %><${entity}, ${IdType}>()<% } else { %><${IdType}>()<%}%> {
 <% }else if(activeRecord){ %>
-class ${entity} : Model<${entity}>() {
+class ${entity}: Model<${entity}>() {
 <% }else if(entitySerialVersionUID){ %>
-class ${entity} : Serializable {
+class ${entity}: Serializable {
 <% }else{ %>
 class ${entity} {
 <% } %>
@@ -121,5 +133,27 @@ class ${entity} {
    <% } %>
     }
 <% } %>
+
+
+<% /** -----------toString----------- **/ %>
+<%
+    /** toString字段内容 */
+    var toString = "";
+    // 父类公共字段
+    for(field in table.commonFields){
+        toString += field.propertyName+"=$"+field.propertyName+", ";
+    }
+    // 普通字段
+    for(field in table.fields){
+        if(fieldLP.last) {
+            toString += field.propertyName+"=$"+field.propertyName;
+        }else {
+            toString += field.propertyName+"=$"+field.propertyName+", ";
+        }
+    }
+%>
+    override fun toString(): String {
+        return "${entity}(${toString})"
+    }
 
 }
