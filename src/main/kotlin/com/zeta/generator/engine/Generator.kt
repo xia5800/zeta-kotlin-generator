@@ -41,7 +41,7 @@ object Generator {
     private val MAPPER_PATH = "dao"
 
     /** xml 文件存放路径 */
-    private val MAPPER_XML_PATH = "mapper_"
+    private val MAPPER_XML_PATH = "mapper"
 
     /** entity 文件存放路径 */
     private val ENTITY_PATH = "model/entity"
@@ -135,13 +135,13 @@ object Generator {
         // dao: 【d://codeGen】/【zeta-boot】/src/main/kotlin/【com/zeta/system/】dao/
         val mapperPath = listOf(basePath, MAPPER_PATH, EMPTY_STR).joinToString("/")
         // mapper.xml: 【d://codeGen】/【zeta-boot】/src/main/resources/mapper_【system】
-        val xmlPath = listOf(config.outputDir, config.projectName, RESOURCES_SOURCE_PATH, MAPPER_XML_PATH).joinToString("/")
+        val xmlPath = listOf(config.outputDir, config.projectName, RESOURCES_SOURCE_PATH, MAPPER_XML_PATH, config.moduleName).joinToString("/")
 
         val pathInfos: MutableMap<OutputFile, String> = mutableMapOf(
             OutputFile.controller to controllerPath,
             OutputFile.entity to entityPath,
             OutputFile.mapper to mapperPath,
-            OutputFile.mapperXml to xmlPath + config.moduleName + "/",
+            OutputFile.mapperXml to xmlPath,
             OutputFile.service to servicePath,
             OutputFile.serviceImpl to serviceImplPath,
             OutputFile.other to basePath,
