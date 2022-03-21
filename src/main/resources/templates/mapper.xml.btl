@@ -18,7 +18,11 @@
 <% } %>
 <% for(field in table.commonFields){ %>
     <% /** 生成公共字段 **/ %>
+    <% if(field.keyFlag){ %>
+        <id column="${field.name}" jdbcType="${field.metaInfo.jdbcType}" property="${field.propertyName}" />
+    <% } else { %>
         <result column="${field.name}" jdbcType="${field.metaInfo.jdbcType}" property="${field.propertyName}" />
+    <% } %>
 <% } %>
 <% for(field in table.fields){ %>
    <% /** 生成普通字段 **/ %>
@@ -30,6 +34,11 @@
 <% } %>
 
 <% if(baseColumnList){ %>
+    <!-- 表名 -->
+    <sql id="TABLE_NAME">
+        ${table.name}
+    </sql>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
     <%
@@ -69,6 +78,28 @@
     %>
         ${joinCommonFields}
         ${sqlFields}
+    </sql>
+
+    <!-- 通用查询条件 -->
+    <sql id="Base_Where">
+        <where>
+            <%
+               // 处理公共字段
+               for(field in table.commonFields){
+            %>
+            <if test="param.${field.propertyName} != null and param.${field.propertyName} != ''">
+                AND ${field.name} <% if(field.columnType != "STRING") { %>= #{param.${field.propertyName}}<% } else { %>LIKE CONCAT('%', #{param.${field.propertyName}}, '%') <% } %>
+            </if>
+            <% } %>
+            <%
+               // 处理普通字段
+               for(field in table.fields){
+            %>
+            <if test="param.${field.propertyName} != null and param.${field.propertyName} != ''">
+                AND ${field.name} <% if(field.columnType != "STRING") { %>= #{param.${field.propertyName}}<% } else { %>LIKE CONCAT('%', #{param.${field.propertyName}}, '%') <% } %>
+            </if>
+            <% } %>
+        </where>
     </sql>
 
 <% } %>
