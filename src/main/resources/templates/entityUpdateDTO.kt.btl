@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel
 import io.swagger.annotations.ApiModelProperty
 <% } %>
 import ${timePackage}
+import org.zetaframework.core.validation.group.Update
 import javax.validation.constraints.*
 
 /**
@@ -25,6 +26,7 @@ data class ${customPackage.entityUpdateDTO}(
         if(strutil.index(modelProperty, "\n") != -1) {
             modelProperty = reg.replace(modelProperty, "\\n", "");
         }
+        var fieldComment = strutil.split(field.comment, " ")[0];
     %>
     <% if(field.keyFlag) { %>
 
@@ -33,6 +35,19 @@ data class ${customPackage.entityUpdateDTO}(
             <% /* 加swagger注解 */ %>
             <% if(swagger){ %>
     @ApiModelProperty(value = "${modelProperty}")
+            <% } %>
+        <% } %>
+        <% /*非空判断*/ %>
+        <% if(!field.metaInfo.nullable) { %>
+            <% if(field.columnType == "INTEGER" || field.columnType == "LONG") { %>
+                <% if(field.keyFlag){ %>
+    @get:NotNull(message = "${fieldComment}不能为空", groups = [Update::class])
+                <% } else { %>
+    @get:NotNull(message = "${fieldComment}不能为空")
+                <% } %>
+            <% } else if(field.columnType == "STRING") { %>
+    @get:NotEmpty(message = "${fieldComment}不能为空")
+    @get:Size(max = ${field.metaInfo.length}, message = "${fieldComment}长度不能超过${field.metaInfo.length}")
             <% } %>
         <% } %>
         <% if(field.propertyType == 'Integer'){ %>
@@ -66,7 +81,7 @@ data class ${customPackage.entityUpdateDTO}(
         <% if(!field.metaInfo.nullable) { %>
             <% if(field.columnType == "INTEGER" || field.columnType == "LONG") { %>
                 <% if(field.keyFlag){ %>
-    @get:NotNull(message = "${fieldComment}不能为空", groups = Update.class)
+    @get:NotNull(message = "${fieldComment}不能为空", groups = [Update::class])
                 <% } else { %>
     @get:NotNull(message = "${fieldComment}不能为空")
                 <% } %>
