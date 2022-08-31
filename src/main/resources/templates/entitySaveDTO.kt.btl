@@ -33,7 +33,7 @@ data class ${customPackage.entitySaveDTO}(
     /** ${modelProperty} */
             <% /* 加swagger注解 */ %>
             <% if(swagger){ %>
-    @ApiModelProperty(value = "${modelProperty}")
+    @ApiModelProperty(value = "${modelProperty}", required = <% print(!field.metaInfo.nullable); %>)
             <% } %>
         <% } %>
         <% /*非空判断*/ %>

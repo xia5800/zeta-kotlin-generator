@@ -30,7 +30,7 @@ data class ${customPackage.entityDTO}(
     /** ${modelProperty} */
         <% /* 加swagger注解 */ %>
         <% if(swagger){ %>
-    @ApiModelProperty(value = "${modelProperty}")
+    @ApiModelProperty(value = "${modelProperty}", required = <% print(!field.metaInfo.nullable); %>)
         <% } %>
     <% } %>
     <% if(field.propertyType == 'Integer'){ %>
@@ -53,7 +53,7 @@ data class ${customPackage.entityDTO}(
     /** ${modelProperty} */
         <% /* 加swagger注解 */ %>
         <% if(swagger){ %>
-    @ApiModelProperty(value = "${modelProperty}")
+    @ApiModelProperty(value = "${modelProperty}", required = <% print(!field.metaInfo.nullable); %>)
         <% } %>
     <% } %>
     <% if(field.propertyType == 'Integer'){ %>
