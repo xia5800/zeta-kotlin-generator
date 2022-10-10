@@ -87,7 +87,7 @@
                // 处理公共字段
                for(field in table.commonFields){
             %>
-            <if test="param.${field.propertyName} != null and param.${field.propertyName} != ''">
+            <if test="param.${field.propertyName} != null<% if(field.columnType == "STRING"){ %> and param.${field.propertyName} != ''<% }%>">
                 AND ${field.name} <% if(field.columnType != "STRING") { %>= #{param.${field.propertyName}}<% } else { %>LIKE CONCAT('%', #{param.${field.propertyName}}, '%') <% } %>
             </if>
             <% } %>
@@ -95,7 +95,7 @@
                // 处理普通字段
                for(field in table.fields){
             %>
-            <if test="param.${field.propertyName} != null and param.${field.propertyName} != ''">
+            <if test="param.${field.propertyName} != null<% if(field.columnType == "STRING"){ %> and param.${field.propertyName} != ''<% }%>">
                 AND ${field.name} <% if(field.columnType != "STRING") { %>= #{param.${field.propertyName}}<% } else { %>LIKE CONCAT('%', #{param.${field.propertyName}}, '%') <% } %>
             </if>
             <% } %>
