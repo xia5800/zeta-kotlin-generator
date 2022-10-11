@@ -11,7 +11,7 @@
 
     <groupId>com.zeta</groupId>
     <artifactId>zeta-kotlin-generator</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <name>${project.artifactId}</name>
     <description>
         zeta-kotlin-generator项目是专为zeta-kotlin项目设计的代码生成器项目
