@@ -43,23 +43,26 @@ data class ${customPackage.entityDTO}(
 <% for(field in table.fields){ %>
 
     <%
+        /*非逻辑删除字段才显示*/
         // @ApiModelProperty去除换行
         var modelProperty = field.comment;
         if(strutil.index(modelProperty, "\n") != -1) {
             modelProperty = reg.replace(modelProperty, "\\n", "");
         }
     %>
-    <% if(isNotEmpty(field.comment)){ %>
+    <% if(!field.logicDeleteField) {%>
+        <% if(isNotEmpty(field.comment)){ %>
     /** ${modelProperty} */
-        <% /* 加swagger注解 */ %>
-        <% if(swagger){ %>
+            <% /* 加swagger注解 */ %>
+            <% if(swagger){ %>
     @ApiModelProperty(value = "${modelProperty}")
+            <% } %>
         <% } %>
-    <% } %>
-    <% if(field.propertyType == 'Integer'){ %>
+        <% if(field.propertyType == 'Integer'){ %>
     var ${field.propertyName}: Int? = null,
-    <% }else{ %>
+        <% }else{ %>
     var ${field.propertyName}: ${field.propertyType}? = null,
+        <% } %>
     <% } %>
 <% } %>
 )
