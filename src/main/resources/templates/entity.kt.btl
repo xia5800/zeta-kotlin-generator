@@ -4,10 +4,18 @@ package ${package.Entity}
 import ${pkg}
 <% } %>
 <% if(swagger){ %>
+    <% if(isSpringFox) { %>
 import io.swagger.annotations.ApiModel
 import io.swagger.annotations.ApiModelProperty
+    <% }else{ %>
+import io.swagger.v3.oas.annotations.media.Schema
+    <% } %>
 <% } %>
+<% if(isJakarta){ %>
+import jakarta.validation.constraints.*
+<% }else{ %>
 import javax.validation.constraints.*
+<% } %>
 <%
 /* 主键字段的类型 */
 var IdType = "";
@@ -36,15 +44,17 @@ for(field in table.commonFields){
 %>
 
 /**
- * <p>
  * ${table.comment!}
- * </p>
  *
  * @author ${author}
  * @date ${date}
  */
 <% if(swagger){ %>
+    <% if(isSpringFox) { %>
 @ApiModel(description = "${table.comment!''}")
+    <% }else{ %>
+@Schema(description = "${table.comment!''}")
+    <% } %>
 <% } %>
 <% if(table.convert){ %>
 @TableName(value = "${schemaName}${table.name}")
@@ -76,7 +86,11 @@ class ${entity} {
     /** ${modelProperty} */
         <% /* 加swagger注解 */ %>
         <% if(swagger){ %>
+            <% if(isSpringFox) { %>
     @ApiModelProperty(value = "${modelProperty}", required = <% print(!field.metaInfo.nullable); %>)
+            <% }else{ %>
+    @Schema(description = "${modelProperty}", required = <% print(!field.metaInfo.nullable); %>)
+            <% } %>
         <% } %>
     <% } %>
     <% /* 非空判断 */ %>

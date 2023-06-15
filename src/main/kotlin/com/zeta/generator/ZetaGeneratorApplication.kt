@@ -3,6 +3,7 @@ package com.zeta.generator
 import com.zeta.generator.engine.CodeGeneratorConfig
 import com.zeta.generator.engine.Generator
 import com.zeta.generator.enums.EntityTypeEnum
+import com.zeta.generator.enums.SwaggerTypeEnum
 
 /**
  * Main方法
@@ -37,7 +38,12 @@ private fun buildConfig(): CodeGeneratorConfig  {
         this.outputDir = "D://codeGen/"
 
         // entity父类路径（默认包含，id、创建人创建时间、修改人修改时间）。 如不需要修改人修改时间，请使用SuperEntity。不需要继承父类请设置EntityTypeEnum.NONE值
-        this.superEntity = EntityTypeEnum.ENTITY
+        this.superEntity = EntityTypeEnum.SUPER_ENTITY
+
+        // 说明：jdk版本大于17才需要设置
+        // this.jdkVersion = 17
+        // 说明：knife4j 2.x版本使用springFox  3.x和4.x版本使用springDoc
+        // this.swaggerType = SwaggerTypeEnum.SPRING_DOC
 
         // 数据库配置
         this.dbUrl = "jdbc:mysql://localhost:3306/zeta_kotlin?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8"

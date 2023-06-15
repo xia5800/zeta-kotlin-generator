@@ -3,6 +3,7 @@ package com.zeta.generator.engine
 import cn.hutool.core.collection.CollUtil
 import cn.hutool.core.util.StrUtil
 import com.zeta.generator.enums.EntityTypeEnum
+import com.zeta.generator.enums.SwaggerTypeEnum
 
 /**
  * 代码生成器配置参数
@@ -36,7 +37,12 @@ data class CodeGeneratorConfig(
     /** 是否启用mapper.java类上的@Repository注解 */
     var enableRepository: Boolean = true,
     /** 生成完代码是否打开生成目录 */
-    var openDir: Boolean = true
+    var openDir: Boolean = true,
+
+    /** jdk版本 说明：jdk17以上部分包路径发生了变化，需要特殊处理 */
+    var jdkVersion: Int = 8,
+    /** swagger类型 说明：knife4j 3.x以上请使用springdoc */
+    var swaggerType: SwaggerTypeEnum = SwaggerTypeEnum.SPRING_FOX,
 ) {
 
     companion object {

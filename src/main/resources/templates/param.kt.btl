@@ -1,20 +1,31 @@
 package ${customPackage.paramBasePackagePath}
 
 <% if(swagger){ %>
+    <% if(isSpringFox) { %>
 import io.swagger.annotations.ApiModel
 import io.swagger.annotations.ApiModelProperty
+    <% }else{ %>
+import io.swagger.v3.oas.annotations.media.Schema
+    <% } %>
 <% } %>
 import ${timePackage}
+<% if(!isEmpty(bigDecimalPackage)) { %>
+import ${bigDecimalPackage}
+<% } %>
 
 /**
- * <p>
  * ${table.comment!} 查询参数
- * </p>
  *
  * @author ${author}
  * @date ${date}
  */
+<% if(swagger) { %>
+    <% if(isSpringFox) { %>
 @ApiModel(description = "${table.comment!''}查询参数")
+    <% }else{ %>
+@Schema(description = "${table.comment!''}查询参数")
+    <% } %>
+<% } %>
 data class ${customPackage.entityQueryParam}(
 <% /** 父类中公有字段 */  %>
 <% for(field in table.commonFields){ %>
@@ -30,7 +41,11 @@ data class ${customPackage.entityQueryParam}(
     /** ${modelProperty} */
         <% /* 加swagger注解 */ %>
         <% if(swagger){ %>
+            <% if(isSpringFox) { %>
     @ApiModelProperty(value = "${modelProperty}")
+            <% }else{ %>
+    @Schema(description = "${modelProperty}")
+            <% } %>
         <% } %>
     <% } %>
     <% if(field.propertyType == 'Integer'){ %>
@@ -54,7 +69,11 @@ data class ${customPackage.entityQueryParam}(
     /** ${modelProperty} */
             <% /* 加swagger注解 */ %>
             <% if(swagger){ %>
+                <% if(isSpringFox) { %>
     @ApiModelProperty(value = "${modelProperty}")
+                <% }else{ %>
+    @Schema(description = "${modelProperty}")
+                <% } %>
             <% } %>
         <% } %>
         <% if(field.propertyType == 'Integer'){ %>

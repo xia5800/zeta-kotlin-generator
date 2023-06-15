@@ -18,7 +18,11 @@ import org.zetaframework.base.result.ApiResult
 import org.zetaframework.core.saToken.annotation.PreAuth
 import org.zetaframework.base.controller.SuperController
 <% if(swagger) { %>
+    <% if(isSpringFox) { %>
 import io.swagger.annotations.*
+    <% }else{ %>
+import io.swagger.v3.oas.annotations.tags.Tag
+    <% } %>
 <% } %>
 <%
 /* 获取主键字段的类型 */
@@ -36,15 +40,17 @@ for(field in table.commonFields){
 %>
 
 /**
- * <p>
  * ${table.comment!} 前端控制器
- * </p>
  *
  * @author ${author}
  * @date ${date}
  */
 <% if(swagger) { %>
+    <% if(isSpringFox) { %>
 @Api(tags = ["${table.comment!}"])
+    <% }else{ %>
+@Tag(name = "${table.comment!}", description = "${table.comment!}")
+    <% } %>
 <% } %>
 @PreAuth(replace = "${authorityCode}")
 <% if(restControllerStyle){ %>

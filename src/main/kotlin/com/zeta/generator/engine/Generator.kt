@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.generator.config.po.TableField
 import com.baomidou.mybatisplus.generator.config.rules.DateType
 import com.baomidou.mybatisplus.generator.engine.BeetlTemplateEngine
 import com.zeta.generator.enums.EntityTypeEnum
+import com.zeta.generator.enums.SwaggerTypeEnum
 import java.util.function.Consumer
 
 /**
@@ -204,6 +205,16 @@ object Generator {
 
             // 自定义dto类名、包路径
             objectMap["customPackage"] = customPackage(tableInfo.entityName, config.packageName, config.moduleName)
+
+            // 是否将javax包替换成 jakarta包
+            objectMap["isJakarta"] = config.jdkVersion >= 17
+            // swagger是否使用springfox注解
+            objectMap["isSpringFox"] = config.swaggerType === SwaggerTypeEnum.SPRING_FOX
+
+            // 判断是否有BigDecimal
+            objectMap["bigDecimalPackage"] = if (tableInfo.fields.any { it.columnType.type == "BigDecimal" }) {
+                "java.math.BigDecimal"
+            } else ""
 
             // 配置自定义模板的位置和生成出来的文件名
             customFile(injectionConfigBuilder, tableInfo.entityName)

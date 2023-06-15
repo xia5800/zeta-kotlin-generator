@@ -1,22 +1,37 @@
 package ${customPackage.dtoPackagePath}
 
 <% if(swagger){ %>
+    <% if(isSpringFox) { %>
 import io.swagger.annotations.ApiModel
 import io.swagger.annotations.ApiModelProperty
+    <% }else{ %>
+import io.swagger.v3.oas.annotations.media.Schema
+    <% } %>
 <% } %>
 import ${timePackage}
+<% if(!isEmpty(bigDecimalPackage)) { %>
+import ${bigDecimalPackage}
+<% } %>
 import org.zetaframework.core.validation.group.Update
+<% if(isJakarta){ %>
+import jakarta.validation.constraints.*
+<% }else{ %>
 import javax.validation.constraints.*
+<% } %>
 
 /**
- * <p>
  * 修改 ${table.comment!}
- * </p>
  *
  * @author ${author}
  * @date ${date}
  */
+<% if(swagger) { %>
+    <% if(isSpringFox) { %>
 @ApiModel(description = "修改${table.comment!''}")
+    <% }else{ %>
+@Schema(description = "修改${table.comment!''}")
+    <% } %>
+<% } %>
 data class ${customPackage.entityUpdateDTO}(
 <%/**
 
@@ -41,7 +56,11 @@ data class ${customPackage.entityUpdateDTO}(
     /** ${modelProperty} */
             <% /* 加swagger注解 */ %>
             <% if(swagger){ %>
+                <% if(isSpringFox) { %>
     @ApiModelProperty(value = "${modelProperty}", required = <% print(!field.metaInfo.nullable); %>)
+                <% }else{ %>
+    @Schema(description = "${modelProperty}", required = <% print(!field.metaInfo.nullable); %>)
+                <% } %>
             <% } %>
         <% } %>
         <% /*非空判断*/ %>
@@ -93,7 +112,11 @@ StateEntity的特有字段state
     /** ${modelProperty} */
             <% /* 加swagger注解 */ %>
             <% if(swagger){ %>
+                <% if(isSpringFox) { %>
     @ApiModelProperty(value = "${modelProperty}", required = <% print(!field.metaInfo.nullable); %>)
+                <% }else{ %>
+    @Schema(description = "${modelProperty}", required = <% print(!field.metaInfo.nullable); %>)
+                <% } %>
             <% } %>
         <% } %>
         <% /*非空判断*/ %>
@@ -138,7 +161,11 @@ StateEntity的特有字段state
     /** ${modelProperty} */
             <% /* 加swagger注解 */ %>
             <% if(swagger){ %>
+                <% if(isSpringFox) { %>
     @ApiModelProperty(value = "${modelProperty}", required = <% print(!field.metaInfo.nullable); %>)
+                <% }else{ %>
+    @Schema(description = "${modelProperty}", required = <% print(!field.metaInfo.nullable); %>)
+                <% } %>
             <% } %>
         <% } %>
         <% /*非空判断*/ %>
