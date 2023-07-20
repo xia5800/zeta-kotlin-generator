@@ -3,6 +3,7 @@ package com.zeta.generator.engine
 import cn.hutool.core.collection.CollUtil
 import cn.hutool.core.util.StrUtil
 import com.zeta.generator.enums.EntityTypeEnum
+import com.zeta.generator.enums.LanguageTypeEnum
 import com.zeta.generator.enums.SwaggerTypeEnum
 
 /**
@@ -43,6 +44,9 @@ data class CodeGeneratorConfig(
     var jdkVersion: Int = 8,
     /** swagger类型 说明：knife4j 3.x以上请使用springdoc */
     var swaggerType: SwaggerTypeEnum = SwaggerTypeEnum.SPRING_FOX,
+
+    /** 开发语言类型 */
+    var languageType: LanguageTypeEnum = LanguageTypeEnum.KOTLIN
 ) {
 
     companion object {

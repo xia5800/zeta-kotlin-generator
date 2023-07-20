@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.generator.config.po.TableField
 import com.baomidou.mybatisplus.generator.config.rules.DateType
 import com.baomidou.mybatisplus.generator.engine.BeetlTemplateEngine
 import com.zeta.generator.enums.EntityTypeEnum
+import com.zeta.generator.enums.LanguageTypeEnum
 import com.zeta.generator.enums.SwaggerTypeEnum
 import java.util.function.Consumer
 
@@ -24,8 +25,11 @@ object Generator {
     /** 空字符串，用于join时多拼接一个'/' */
     private const val EMPTY_STR = ""
 
-    /** Kotlin 文件存放路径 */
-    private const val KOTLIN_SOURCE_PATH = "src/main/kotlin"
+    // /** Kotlin 文件存放路径 */
+    // private const val KOTLIN_SOURCE_PATH = "src/main/kotlin"
+
+    /** Kotlin or java 文件存放路径 后面需拼接对应的目录 java拼接java，kotlin拼接kotlin */
+    private var SOURCE_PATH = "src/main/"
 
     /** 资源 文件存放路径 */
     private const val RESOURCES_SOURCE_PATH = "src/main/resources"
@@ -54,6 +58,12 @@ object Generator {
     /** entityQueryParam 文件存放路径 */
     private const val ENTITY_QUERY_PARAM_PATH = "model/param"
 
+    /** 开发语言模板的路径 */
+    private var LANGUAGE_TEMPLATE_PATH = ""
+
+    /** 开发语言模板文件的后缀 */
+    private var LANGUAGE_FILE_SUFFIX = ""
+
 
     /**
      * 代码生成
@@ -64,6 +74,19 @@ object Generator {
      * @param config CodeGeneratorConfig
      */
     fun run(config: CodeGeneratorConfig) {
+        when(config.languageType) {
+            LanguageTypeEnum.KOTLIN -> {
+                LANGUAGE_TEMPLATE_PATH = LanguageTypeEnum.KOTLIN.path
+                LANGUAGE_FILE_SUFFIX = LanguageTypeEnum.KOTLIN.suffix
+                SOURCE_PATH += LanguageTypeEnum.KOTLIN.path
+            }
+            LanguageTypeEnum.JAVA -> {
+                LANGUAGE_TEMPLATE_PATH = LanguageTypeEnum.JAVA.path
+                LANGUAGE_FILE_SUFFIX = LanguageTypeEnum.JAVA.suffix
+                SOURCE_PATH += LanguageTypeEnum.JAVA.path
+            }
+        }
+
         FastAutoGenerator.create(config.dbUrl, config.dbUsername, config.dbPassword)
             // 全局配置
             .globalConfig(globalConfigBuild(config))
@@ -94,8 +117,10 @@ object Generator {
                 // 禁止打开输出目录
                 it.disableOpenDir()
             }
-            // 开启 kotlin 模式
-            it.enableKotlin()
+            if(config.languageType == LanguageTypeEnum.KOTLIN) {
+                // 开启 kotlin 模式
+                it.enableKotlin()
+            }
             // 开启 swagger 模式
             it.enableSwagger()
             // 覆盖已有文件
@@ -179,12 +204,27 @@ object Generator {
      */
     private fun templateConfigBuild(): Consumer<TemplateConfig.Builder> = Consumer {
         // 配置模板路径
-        it.controller("/templates/controller.kt")
-        it.service("/templates/service.kt")
-        it.serviceImpl("/templates/serviceImpl.kt")
-        it.entity("/templates/entity.kt")
-        it.mapper("/templates/mapper.kt")
-        it.mapperXml("/templates/mapper.xml")
+        it.controller(generateTemplatePath("controller"))
+        it.service(generateTemplatePath("service"))
+        it.serviceImpl(generateTemplatePath("serviceImpl"))
+        it.entity(generateTemplatePath("entity"))
+        it.mapper(generateTemplatePath("mapper"))
+        it.mapperXml(generateTemplatePath("mapper", "xml"))
+    }
+
+    /**
+     * 生成模板路径
+     * @param name String 文件名
+     * @param suffix String 文件后缀
+     * @param isBtl String 是否加btl后缀
+     * @return eg:
+     *  "/templates/kotlin/controller.kt"
+     *  "/templates/kotlin/controller.kt.btl"
+     *  "/templates/java/controller.java"
+     *  "/templates/java/controller.java.btl"
+     */
+    private fun generateTemplatePath(name: String, suffix: String = LANGUAGE_FILE_SUFFIX, isBtl: Boolean = false): String {
+        return "/templates/${LANGUAGE_TEMPLATE_PATH}/${name}.${suffix}${if (isBtl) ".btl" else ""}"
     }
 
     /**
@@ -253,15 +293,15 @@ object Generator {
      */
     private fun getBasePath(config: CodeGeneratorConfig): String {
         val packagePath = "${config.packageName.split(".").joinToString("/")}/${config.moduleName}"
-        // basePath: 【d://codeGen】/【zeta-boot】/src/main/kotlin/【com/zeta/system】
-        return listOf(config.outputDir, config.projectName, KOTLIN_SOURCE_PATH, packagePath).joinToString("/")
+        // basePath: 【d://codeGen】/【zeta-boot】/src/main/【kotlin or java】/【com/zeta/system】
+        return listOf(config.outputDir, config.projectName, SOURCE_PATH, packagePath).joinToString("/")
     }
 
     /**
      * 获取Controller文件的存放路径
      *
-     * @param basePath 项目绝对路径 eg: d://codeGen/zeta-boot/src/main/kotlin/com/zeta/system
-     * @return Controller文件的绝对路径 eg: d://codeGen/zeta-boot/src/main/kotlin/com/zeta/system/controller/
+     * @param basePath 项目绝对路径 eg: d://codeGen/zeta-boot/src/main/【kotlin or java】/com/zeta/system
+     * @return Controller文件的绝对路径 eg: d://codeGen/zeta-boot/src/main/【kotlin or java】/com/zeta/system/controller/
      */
     private fun getControllerPath(basePath: String): String {
         return listOf(basePath, CONTROLLER_PATH, EMPTY_STR).joinToString("/")
@@ -270,8 +310,8 @@ object Generator {
     /**
      * 获取Entity文件的存放路径
      *
-     * @param basePath 项目绝对路径 eg: d://codeGen/zeta-boot/src/main/kotlin/com/zeta/system
-     * @return Entity文件的绝对路径 eg: d://codeGen/zeta-boot/src/main/kotlin/com/zeta/system/model/entity/
+     * @param basePath 项目绝对路径 eg: d://codeGen/zeta-boot/src/main/【kotlin or java】/com/zeta/system
+     * @return Entity文件的绝对路径 eg: d://codeGen/zeta-boot/src/main/【kotlin or java】/com/zeta/system/model/entity/
      */
     private fun getEntityPath(basePath: String): String {
         return listOf(basePath, ENTITY_PATH, EMPTY_STR).joinToString("/")
@@ -280,8 +320,8 @@ object Generator {
     /**
      * 获取Service文件的存放路径
      *
-     * @param basePath 项目绝对路径 eg: d://codeGen/zeta-boot/src/main/kotlin/com/zeta/system
-     * @return Service文件的绝对路径 eg: d://codeGen/zeta-boot/src/main/kotlin/com/zeta/system/service/
+     * @param basePath 项目绝对路径 eg: d://codeGen/zeta-boot/src/main/【kotlin or java】/com/zeta/system
+     * @return Service文件的绝对路径 eg: d://codeGen/zeta-boot/src/main/【kotlin or java】/com/zeta/system/service/
      */
     private fun getServicePath(basePath: String): String {
         return listOf(basePath, SERVICE_PATH, EMPTY_STR).joinToString("/")
@@ -290,8 +330,8 @@ object Generator {
     /**
      * 获取ServiceImpl文件的存放路径
      *
-     * @param basePath 项目绝对路径 eg: d://codeGen/zeta-boot/src/main/kotlin/com/zeta/system
-     * @return ServiceImpl文件的绝对路径 eg: d://codeGen/zeta-boot/src/main/kotlin/com/zeta/system/service/impl/
+     * @param basePath 项目绝对路径 eg: d://codeGen/zeta-boot/src/main/【kotlin or java】/com/zeta/system
+     * @return ServiceImpl文件的绝对路径 eg: d://codeGen/zeta-boot/src/main/【kotlin or java】/com/zeta/system/service/impl/
      */
     private fun getServiceImplPath(basePath: String): String {
         return listOf(basePath, SERVICE_IMPL_PATH, EMPTY_STR).joinToString("/")
@@ -300,8 +340,8 @@ object Generator {
     /**
      * 获取Mapper(Dao)文件的存放路径
      *
-     * @param basePath 项目绝对路径 eg: d://codeGen/zeta-boot/src/main/kotlin/com/zeta/system
-     * @return Mapper(Dao)文件的绝对路径 eg: d://codeGen/zeta-boot/src/main/kotlin/com/zeta/system/dao/
+     * @param basePath 项目绝对路径 eg: d://codeGen/zeta-boot/src/main/【kotlin or java】/com/zeta/system
+     * @return Mapper(Dao)文件的绝对路径 eg: d://codeGen/zeta-boot/src/main/【kotlin or java】/com/zeta/system/dao/
      */
     private fun getMapperPath(basePath: String): String {
         return listOf(basePath, MAPPER_PATH, EMPTY_STR).joinToString("/")
@@ -464,18 +504,22 @@ object Generator {
         val entityDTOPath = "${ENTITY_DTO_PATH}/${entityName.lowCaseKeyFirstChar()}"
 
         /**
-         * entityDTO :          【d://codeGen】/【zeta-boot】/src/main/kotlin/【com/zeta/system/】/model/dto/【tableName】
-         * entitySaveDTO :      【d://codeGen】/【zeta-boot】/src/main/kotlin/【com/zeta/system/】/model/dto/【tableName】SaveDTO
-         * entityUpdateDTO :    【d://codeGen】/【zeta-boot】/src/main/kotlin/【com/zeta/system/】/model/dto/【tableName】UpdateDTO
-         * entityQueryParam ：  【d://codeGen】/【zeta-boot】/src/main/kotlin/【com/zeta/system/】/model/param
+         * entityDTO :          【d://codeGen】/【zeta-boot】/src/main/【kotlin or java】/【com/zeta/system/】/model/dto/【tableName】
+         * entitySaveDTO :      【d://codeGen】/【zeta-boot】/src/main/【kotlin or java】/【com/zeta/system/】/model/dto/【tableName】SaveDTO
+         * entityUpdateDTO :    【d://codeGen】/【zeta-boot】/src/main/【kotlin or java】/【com/zeta/system/】/model/dto/【tableName】UpdateDTO
+         * entityQueryParam ：  【d://codeGen】/【zeta-boot】/src/main/【kotlin or java】/【com/zeta/system/】/model/param
          */
         // 在这里配置自定义模板的位置和生成出来的文件名
         injectionConfigBuilder.customFile(mutableMapOf<String, String>(
             // ps：由于上面配置了other目录的pathInfo。所以这里的key（即文件名）要配一个路径。为什么要`../`相对路径是因为不这样会创建一个和表同名的文件夹
-            "../${entityDTOPath}/${getEntityDTOName(entityName)}.kt" to "/templates/entityDTO.kt.btl",
-            "../${entityDTOPath}/${getEntitySaveDTOName(entityName)}.kt" to "/templates/entitySaveDTO.kt.btl",
-            "../${entityDTOPath}/${getEntityUpdateDTOName(entityName)}.kt" to "/templates/entityUpdateDTO.kt.btl",
-            "../${ENTITY_QUERY_PARAM_PATH}/${getEntityQueryParamName(entityName)}.kt" to "/templates/param.kt.btl",
+            // "../${entityDTOPath}/${getEntityDTOName(entityName)}.${LANGUAGE_FILE_SUFFIX}" to "/templates/kotlin/entityDTO.kt.btl",
+            "../${entityDTOPath}/${getEntityDTOName(entityName)}.${LANGUAGE_FILE_SUFFIX}" to generateTemplatePath("entityDTO", isBtl = true),
+            // "../${entityDTOPath}/${getEntitySaveDTOName(entityName)}.${LANGUAGE_FILE_SUFFIX}" to "/templates/kotlin/entitySaveDTO.kt.btl",
+            "../${entityDTOPath}/${getEntitySaveDTOName(entityName)}.${LANGUAGE_FILE_SUFFIX}" to generateTemplatePath("entitySaveDTO", isBtl = true),
+            // "../${entityDTOPath}/${getEntityUpdateDTOName(entityName)}.${LANGUAGE_FILE_SUFFIX}" to "/templates/kotlin/entityUpdateDTO.kt.btl",
+            "../${entityDTOPath}/${getEntityUpdateDTOName(entityName)}.${LANGUAGE_FILE_SUFFIX}" to generateTemplatePath("entityUpdateDTO", isBtl = true),
+            // "../${ENTITY_QUERY_PARAM_PATH}/${getEntityQueryParamName(entityName)}.${LANGUAGE_FILE_SUFFIX}" to "/templates/kotlin/param.kt.btl",
+            "../${ENTITY_QUERY_PARAM_PATH}/${getEntityQueryParamName(entityName)}.${LANGUAGE_FILE_SUFFIX}" to generateTemplatePath("param", isBtl = true),
         ))
     }
 
