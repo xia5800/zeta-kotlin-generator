@@ -3,7 +3,7 @@
 ## 简介
 zeta-kotlin-generator是使用kotlin语言基于`mybatis-plus-generator`框架开发的代码生成器项目。
 
-是专门为 [zeta-kotlin](https://gitee.com/xia5800/zeta-kotlin) 项目定做的代码生成器。
+是专门为 [zeta-kotlin](https://gitee.com/xia5800/zeta-kotlin) 和[zeta-java](https://gitee.com/xia5800/zeta-java)项目定做的代码生成器。
 
 
 ## 友情链接 & 特别鸣谢
