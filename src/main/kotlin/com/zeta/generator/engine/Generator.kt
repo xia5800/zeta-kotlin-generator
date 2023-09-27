@@ -208,6 +208,7 @@ object Generator {
         it.service(generateTemplatePath("service"))
         it.serviceImpl(generateTemplatePath("serviceImpl"))
         it.entity(generateTemplatePath("entity"))
+        it.entityKt(generateTemplatePath("entity"))
         it.mapper(generateTemplatePath("mapper"))
         it.mapperXml(generateTemplatePath("mapper", "xml"))
     }

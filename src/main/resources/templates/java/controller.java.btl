@@ -19,9 +19,9 @@ import org.zetaframework.core.saToken.annotation.PreAuth;
 import org.zetaframework.base.controller.SuperController;
 <% if(swagger) { %>
     <% if(isSpringFox) { %>
-    import io.swagger.annotations.*;
+import io.swagger.annotations.*;
     <% }else{ %>
-    import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tag;
     <% } %>
 <% } %>
 <%
